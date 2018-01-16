@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Compare</title>
+
+    <!-- Bootstrap -->
+    <link href="//cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/select2/4.0.0/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../cdnFile/bootstrap-table.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdn.bootcss.com/select2/4.0.0/js/select2.min.js"></script>
+    <script src="//cdn.bootcss.com/select2/4.0.0/js/i18n/zh-CN.js"></script>
+
+    <script src="../cdnFile/bootstrap-table.min.js"></script>
+    <!--script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-zh-CN.min.js"></script> -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/extensions/export/bootstrap-table-export.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Performance</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">Query</a></li>
+                <li><a href="page2.html">Compare</a></li>
+                <li class="active"><a href="#">V6-V7 Compare<span class="sr-only">(current)</span> </a></li>
+                <li><a href="page3.html">Trend</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<!--菜单结束-->
+
+<div class="container">
+    <div id="panel1" class="panel panel-default">
+        <div class="panel-heading">Step1</div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="dvdList1" class="col-sm-1 control-label">V6 Spin</label>
+                    <div class="col-sm-4">
+                        <select id="dvdList1"></select>
+                    </div>
+                    <label for="dvdList2" class="col-sm-1 control-label">V7 Spin</label>
+                    <div class="col-sm-4">
+                        <select id="dvdList2"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <!--label for="boardList" class="col-sm-1 control-label">BoardType</label>
+                    <div class="col-sm-3">
+                        <select id="boardList"></select>
+                    </div-->
+                    <label for="mpList" class="col-sm-1 control-label">MP</label>
+                    <div class="col-sm-4">
+                        <select id="mpList"></select>
+                    </div>
+                    <label for="bitsList" class="col-sm-1 control-label">Bits</label>
+                    <div class="col-sm-4">
+                        <select id="bitsList"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success center-block" onclick="javascript:step_one();">Submit</button>
+                </div>
+            </form>
+            <table id="table1" data-toggle="table">
+                <thead>
+                <tr>
+                    <th data-field="bsp1">bsp1</th>
+                    <th data-field="board1">boardType1</th>
+                    <th data-field="mp1">mp1</th>
+                    <th data-field="bits1">bits1</th>
+                    <th data-field="compare" data-formatter="cellFormatter">compare</th>
+                    <th data-field="bsp2">bsp2</th>
+                    <th data-field="board2">boardType2</th>
+                    <th data-field="mp2">mp2</th>
+                    <th data-field="bits2">bits2</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <!--step2-->
+    <div id="panel2" class="panel panel-default" style="display: none;">
+        <div class="panel-heading">
+            <span class="label label-info">Step2</span>
+            <a class="pull-right" href="javascript:void(0);" onclick="javascript:backup();">GO Back Step1</a></div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <input type="hidden" id="bsp1" value="">
+                <input type="hidden" id="bsp2" value="">
+                <input type="hidden" id="board" value="">
+                <input type="hidden" id="mp" value="">
+                <input type="hidden" id="bits" value="">
+                <div class="form-group">
+                    <label for="testSuiteList" class="col-sm-1 control-label">TestSuite</label>
+                    <div class="col-sm-3">
+                        <select id="testSuiteList"></select>
+                    </div>
+                    <label for="dosFsList" class="col-sm-1 control-label">DosFs</label>
+                    <div class="col-sm-3">
+                        <select id="dosFsList"></select>
+                    </div>
+                    <label for="cacheList" class="col-sm-1 control-label">Cache</label>
+                    <div class="col-sm-3">
+                        <select id="cacheList"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success center-block" onclick="javascript:step_twe();">Submit</button>
+                </div>
+            </form>
+            <table id="table2" data-toggle="table">
+                <thead>
+                <tr>
+                    <th data-field="bmName1">bm Name</th>
+                    <th data-field="bmData1">bm Data</th>
+                    <th data-field="diff" data-formatter="diffFormatter">(right data-left data)/left data</th>
+                    <th data-field="bmName2">bm Data</th>
+                    <th data-field="bmData2">bm Name</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+	<div id="export">
+		<!--a data-type="json" href="javascript:;">Export json</a>
+		<a data-type="txt" href="javascript:;">Export txt</a>
+		<a data-type="doc" href="javascript:;">Export word</a>
+		<a data-type="csv" href="javascript:;">Export csv</ai-->
+		<a class="pull-right" data-type="xls" href="javascript:;">Export excel</a>
+	</div>
+    </div>
+</div>
+
+	<script src="./static/Blob.js"></script>
+	<script src="./static/FileSaver.js"></script>
+	<script src="./static/tableExport.js"></script>
+	<script>
+	var $exportLink = document.getElementById('export');
+	$exportLink.addEventListener('click', function(e){
+		e.preventDefault();
+		if(e.target.nodeName === "A"){
+			tableExport('table2', 'v6v7_compare', e.target.getAttribute('data-type'));
+		}
+	}, false);
+	</script>
+
+<script>
+
+    function cellFormatter(v, r){
+        if(r.board1 && r.board2){
+            return '<button type="button" class="btn btn-sm btn-warning" onclick="javascript:compare(' +
+                    '\'' + r.bsp1 + '\', \'' + r.bsp2 + '\', \'' + r.board1 + '\', \'' + r.mp1 + '\',\'' + r.bits1 +
+                    '\');">Compare</button>';
+        }
+    }
+
+    //function diffFormatter(v, r){
+    //    return '<span class="label label-info">' + v + '</span>';
+    //}
+
+    function diffFormatter(v, r){
+        var changecolor='black'
+        //if(v>5 && v<10){changecolor='yellow';}
+        if(v>5 && v<10){changecolor='blue';}
+        else if(v>10)
+        {changecolor='red';}
+        else if(v<-10)
+        {changecolor='blueviolet';}
+        else if(v<-5 && v>-10)
+        {changecolor='darkorange';}
+        return '<span class="label lable-info" style="color:'+ changecolor+'">' + v + '%' + '</span>';
+    }
+
+    function compare(bsp1, bsp2, board, mp, bits){
+        $('#bsp1').val(bsp1);
+        $('#bsp2').val(bsp2);
+        $('#board').val(board);
+        $('#mp').val(mp);
+        $('#bits').val(bits);
+
+        $('#panel1').fadeOut("slow");
+        $('#panel2:hidden:first').fadeIn("slow");
+    }
+
+    function backup(){
+        $('#board').val(board);
+        $('#mp').val('');
+        $('#bits').val('');
+
+        $('#panel2').fadeOut("slow");
+        $('#panel1:hidden:first').fadeIn("slow");
+    }
+    
+     $.ajax({
+        url : 'json.php?name=project'
+    }).done(function(data) {
+        $("#projectList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+
+    $.ajax({
+        url : 'json.php?name=dvd',
+        data : {
+            project : 'vx69' 
+        }
+    }).done(function(data) {
+        $("#dvdList1").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+
+    $.ajax({
+        url : 'json.php?name=dvd',
+        data : {
+            project : 'vx7'
+        }
+    }).done(function(data) {
+        $("#dvdList2").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+
+        $("select").val(null).trigger("change");
+    });
+
+
+    $('#projectList').on("select2:select", function(e){
+        $.ajax({
+            url : 'json.php?name=dvd',
+            data : {
+                project : $('#projectList').val()
+            }
+        }).done(function(data) {
+            var list = $("#dvdList1");
+            list.html('');
+            list.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list.val(null).trigger("change");
+            var list2 = $("#dvdList2");
+            list2.html('');
+            list2.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list2.val(null).trigger("change");
+        });
+    });
+
+
+    $.ajax({
+        url : 'json.php?name=bsp'
+    }).done(function(data) {
+        $("#bspList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+    
+    $('#projectList').on("select2:select", function(e){
+        $.ajax({
+            url : 'json.php?name=bsp',
+            data : {
+                project : $('#projectList').val()
+            }
+        }).done(function(data) {
+            var list = $("#bspList");
+            list.html('');
+            list.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list.val(null).trigger("change");
+        });
+    });
+
+    $.ajax({
+        url : 'json.php?name=board'
+    }).done(function(data) {
+        $("#boardList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+
+    $("#mpList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'smp', text:'smp'}, {id:'up', text:'up'}]
+    });
+    $("select").val(null).trigger("change");
+
+    $("#bitsList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'32', text:'32'}, {id:'64', text:'64'}]
+    });
+
+    $("#dosFsList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'Y', text:'Y'}, {id:'N', text:'N'}]
+    });
+
+    $("#cacheList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'Y', text:'Y'}, {id:'N', text:'N'}]
+    });
+
+    $.ajax({
+        url : 'json.php?name=testsuite'
+    }).done(function(data) {
+        $("#testSuiteList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+
+
+
+
+
+    function step_one(){
+        $('#table1').bootstrapTable('refresh', {
+            silent: true,
+            url : 'page67.php',
+            query: {
+                step : 1,
+                dvd1 : $('#dvdList1').val(),
+                dvd2 : $('#dvdList2').val(),
+                board : $('#boardList').val(),
+                mp : $('#mpList').val(),
+                bits : $('#bitsList').val()
+            }
+        });
+    }
+
+    function step_twe(){
+        $('#table2').bootstrapTable('refresh', {
+            silent: true,
+            url : 'page67.php',
+            query: {
+                step : 2,
+                dvd1 : $('#dvdList1').val(),
+                dvd2 : $('#dvdList2').val(),
+                bsp1 : $('#bsp1').val(),
+                bsp2: $('#bsp2').val(),
+                board : $('#board').val(),
+                mp : $('#mp').val(),
+                bits : $('#bits').val(),
+                testSuite : $('#testSuiteList').val(),
+                dosFs : $('#dosFsList').val(),
+                cache : $('#cacheList').val()
+            }
+        });
+    }
+</script>
+</body>
+</html>

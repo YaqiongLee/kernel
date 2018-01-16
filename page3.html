@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Kernel Trend</title>
+
+    <!-- Bootstrap -->
+    <link href="//cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/select2/4.0.0/css/select2.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdn.bootcss.com/select2/4.0.0/js/select2.min.js"></script>
+    <script src="//cdn.bootcss.com/select2/4.0.0/js/i18n/zh-CN.js"></script>
+    <script src="static/echarts/echarts.js"></script>
+    <script type="text/javascript">
+        var chart = null;
+
+        require.config({
+            paths: {
+                echarts: './static/echarts'
+            }
+        });
+        require(
+            [
+                'echarts',
+                'echarts/chart/line',
+                'echarts/chart/bar'
+            ],
+            function (ec) {
+                chart = ec.init(document.getElementById('main'));
+            }
+        );
+    </script>
+
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Performance</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">Query</a></li>
+                <li><a href="page2.html">Compare</a></li>
+                <li><a href="v6v7.html">V6-V7 Compare</a></li>
+                <li class="active"><a href="#">Trend<span class="sr-only">(current)</span></a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<!--菜单结束-->
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">Select Filter</div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="form-group">
+                     <label for="projectList" class="col-sm-1 control-label">Project</label>
+                    <div class="col-sm-3">
+                        <select id="projectList"></select>
+                    </div>
+                    <label for="bspList" class="col-sm-1 control-label">BSP</label>
+                    <div class="col-sm-3">
+                        <select id="bspList"></select>
+                    </div>
+                    <label for="boardList" class="col-sm-1 control-label">BoradType</label>
+                    <div class="col-sm-3">
+                        <select id="boardList"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mpList" class="col-sm-1 control-label">MP</label>
+                    <div class="col-sm-3">
+                        <select id="mpList"></select>
+                    </div>
+                    <label for="bitsList" class="col-sm-1 control-label">Bits</label>
+                    <div class="col-sm-3">
+                        <select id="bitsList"></select>
+                    </div>
+                    <label for="dosFsList" class="col-sm-1 control-label">dosFs</label>
+                    <div class="col-sm-3">
+                        <select id="dosFsList"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cacheList" class="col-sm-1 control-label">Cache</label>
+                    <div class="col-sm-3">
+                        <select id="cacheList"></select>
+                    </div>
+                    <label for="testSuiteList" class="col-sm-1 control-label">TestSuite</label>
+                    <div class="col-sm-3">
+                        <select id="testSuiteList"></select>
+                    </div>
+                    <label for="testNameList" class="col-sm-1 control-label">TestCase</label>
+                    <div class="col-sm-3">
+                        <select id="testNameList"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success center-block" onclick="javascript:showCharts();">Submit</button>
+                </div>
+            </form>
+
+        </div>
+
+        <div id="main" class="container" style="height: 500px;width: 1110px;">
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    
+    $.ajax({
+        url : 'json.php?name=project'
+    }).done(function(data) {
+        $("#projectList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+   
+    $.ajax({
+        url : 'json.php?name=bsp'
+    }).done(function(data) {
+        $("#bspList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+   
+   $.ajax({
+        url : 'json.php?name=board'
+    }).done(function(data) {
+        $("#boardList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+ 
+    $('#projectList').on("select2:select", function(e){
+        $.ajax({
+            url : 'json.php?name=bsp',
+            data : {
+                project : $('#projectList').val()
+            }
+        }).done(function(data) {
+            var list = $("#bspList");
+            list.html('');
+            list.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list.val(null).trigger("change");
+        });
+    });
+    
+    $('#bspList').on("select2:select", function(e){
+        $.ajax({
+            url : 'json.php?name=board',
+            data : {
+                project : $('#projectList').val(),
+                bsp     : $('#bspList').val()
+            }
+        }).done(function(data) {
+            var list = $("#boardList");
+            list.html('');
+            list.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list.val(null).trigger("change");
+        });
+    });
+
+    
+    $.ajax({
+        url : 'json.php?name=testsuite'
+    }).done(function(data) {
+        $("#testSuiteList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+
+    $.ajax({
+        url : 'json.php?name=testname'
+    }).done(function(data) {
+        $("#testNameList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+/*
+    $("#mpList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'smp', text:'smp'}, {id:'up', text:'up'}]
+    });
+    $("select").val(null).trigger("change");
+
+    $("#bitsList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'32', text:'32'}, {id:'64', text:'64'}]
+    });
+    $("select").val(null).trigger("change");
+*/
+    $.ajax({
+        url : 'json.php?name=mp'
+    }).done(function(data) {
+        $("#mpList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+
+    $.ajax({
+        url : 'json.php?name=bits'
+    }).done(function(data) {
+        $("#bitsList").select2({
+            placeholder : 'please choose',
+            allowClear: true,
+            width : 250,
+            data : eval(data)
+        });
+        $("select").val(null).trigger("change");
+    });
+
+    $("#dosFsList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'Y', text:'Y'}, {id:'N', text:'N'}]
+    });
+    $("select").val(null).trigger("change");
+
+    $("#cacheList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 250,
+        data : [{id:'Y', text:'Y'}, {id:'N', text:'N'}]
+    });
+    $("select").val(null).trigger("change");
+
+    $('#testSuiteList').on("select2:select", function(e){
+        $.ajax({
+            url : 'json.php?name=testname',
+            data : {
+                testSuite : $('#testSuiteList').val()
+            }
+        }).done(function(data) {
+            var list = $("#testNameList");
+            list.html('');
+            list.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list.val(null).trigger("change");
+        });
+    });
+
+
+    $('#bspList').on("select2:select", function(e){
+        $.ajax({
+            url : 'json.php?name=bits',
+            data : {
+                bsp : $('#bspList').val()
+            }
+        }).done(function(data) {
+            var list = $("#bitsList");
+            list.html('');
+            list.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list.val(null).trigger("change");
+        });
+    });
+
+    $('#bspList').on("select2:select", function(e){
+        $.ajax({
+            url : 'json.php?name=mp',
+            data : {
+                bsp : $('#bspList').val()
+            }
+        }).done(function(data) {
+            var list = $("#mpList");
+            list.html('');
+            list.select2({
+                placeholder : 'please choose',
+                allowClear: true,
+                width : 250,
+                data : eval(data)
+            });
+            list.val(null).trigger("change");
+        });
+    });
+
+    function showCharts(){
+        $.ajax({
+            url : 'page3.php',
+            method : 'get',
+            data : {
+                project : $('#projectList').val(),
+                bsp : $('#bspList').val(),
+                board : $('#boardList').val(),
+                mp : $('#mpList').val(),
+                bits : $('#bitsList').val(),
+                dosFs : $('#dosFsList').val(),
+                cache : $('#cacheList').val(),
+                testSuite : $('#testSuiteList').val(),
+                testName : $('#testNameList').val()
+            }
+        }).done(function(data){
+//            console.log(data);
+            var obj = eval("(" + data + ")");
+//            console.log(obj);
+//             console.log(obj.dvd);
+//            console.log(obj.average);
+
+            if(!obj.dvd || obj.dvd.length <=0 || !obj.average || obj.average.length <= 0){
+                chart.clear();
+                chart.showLoading({
+                    text : 'there is no data.',
+                    effect : 'bubble',
+                    textStyle : {
+                        fontSize : 30
+                    }
+                });
+                return ;
+            }else{
+                chart.hideLoading();
+                chart.clear();
+				
+				var option = {
+                	title : {
+                    	text: 'Case runtime',
+                    	subtext: 'average, min, max time'
+                	},
+                	tooltip : {
+                    	trigger: 'axis'
+                	},
+                	legend: {
+                    	data:['average','min','max']
+                   		// data:['min']
+               		},
+                	toolbox: {
+                    	show : true,
+                    	feature : {
+                        	mark : {show: true},
+                        	dataZoom : {show: true},
+                        	dataView : {show: true, readOnly: false},
+                        	magicType : {show: true, type: ['line', 'bar']},
+                        	restore : {show: true},
+                        	saveAsImage : {show: true}
+                    }
+                },
+                calculable : true,
+                dataZoom:{
+                    orient:"horizontal",
+                    show:true,
+                    start:20,
+                    end:80 
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        data : obj.dvd,
+//                        axisLabel : {
+//                           show:true,
+//                           interval: 'auto',    // {number}
+//                           rotate: 45,
+//                           margin: 8,
+//                           formatter: '{value}Ô',
+//                           textStyle: {
+//                               color: 'blue',
+//                               fontFamily: 'sans-serif',
+//                               fontSize: 15,
+//                               fontStyle: 'italic',
+//                               fontWeight: 'bold'
+//                           }
+//                        }
+                    } 
+                  
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        axisLabel : {
+                            formatter: '{value} us'
+                        }
+                    }
+                ],
+                series : [
+                    {
+                        name:'average',
+                        type:'line',
+                        data:obj.average,
+                    },
+                    {
+                       name:'min',
+                       type:'line',
+                       data:obj.min,
+                    },
+                    {
+                        name:'max',
+                        type:'line',
+                        data:obj.max,
+                   }
+               ]
+            };
+
+            chart.setOption(option);
+
+            }
+
+        });
+    }
+
+</script>
+</body>
+</html>

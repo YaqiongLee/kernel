@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Trend</title>
+
+    <!-- Bootstrap -->
+    <link href="//cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/select2/4.0.0/css/select2.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdn.bootcss.com/select2/4.0.0/js/select2.min.js"></script>
+    <script src="//cdn.bootcss.com/select2/4.0.0/js/i18n/zh-CN.js"></script>
+
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Performance</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">Query</a></li>
+                <li><a href="page2.html">Compare</a></li>
+                <li class="active"><a href="#">Trend<span class="sr-only">(current)</span></a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<!--菜单结束-->
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">Select Filter</div>
+        <div class="panel-body">
+            <form class="form-horizontal" action='page4.php' method=post target=frame_new>
+                <div class="form-group">
+                    <label for="ReleaseList" class="col-sm-1 control-label">Release</label>
+                    <div class="col-sm-3">
+                        <select name=release id="ReleaseList"></select>
+                    </div>
+                    <label for="SprintList" class="col-sm-1 control-label">Sprint</label>
+                    <div class="col-sm-3">
+                        <select name=sprint id="SprintList"></select>
+                    </div>
+                    <label for="WeekList" class="col-sm-1 control-label">Week</label>
+                    <div class="col-sm-3">
+                        <select name=week id="WeekList"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="DomainList" class="col-sm-1 control-label">Domain</label>
+                    <div class="col-sm-3">
+                        <select name=domain id="DomainList"></select>
+                    </div>
+                    <label for="HostosList" class="col-sm-1 control-label">Hostos</label>
+                    <div class="col-sm-3">
+                        <select name=hostos id="HostosList"></select>
+                    </div>
+                    <label for="Requirement" class="col-sm-1 control-label">Requirement</label>
+                    <div class="col-sm-3">
+                        <input name=require id="Requiremnet" type='text' maxlength='350' size=25 value=''>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="LogAddr" class="col-sm-1 control-label">Log Path</label>
+                    <div class="col-sm-5">
+                        <input name=logaddr id="LogAddr" type='text' maxlength='350' size=60 value=''>
+                    </div>
+                    <label for="Taskid" class="col-sm-1 control-label">Task ID</label>
+                    <div class="col-sm-5">
+                        <input name=taskid id="TaskId" type='text' maxlength='100' size=10 value=''>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="MongoDB" class="col-sm-1 control-label">MongoDB</label>
+                    <div class="col-sm-5">
+                        <select name=mongodb id="MongoDB"></select>    
+                    </div>
+                    <label for="Update" class="col-sm-1 control-label">Update</label>
+                    <div class="col-sm-5">
+                        <select name=update id="Update"></select>    
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success center-block" >Submit</button>
+                </div>
+            </form>
+
+        </div>
+	<div align=center>
+	<iframe id=frame_new name=frame_new style="height: 200px; width: 90%" frameborder=1></iframe>
+	</div>
+
+        <div id="main" class="container" style="height: 500px;width: 1110px;">
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $("#ReleaseList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 200,
+        data : [{id:'VxWorks-Nov06-release', text:'VxWorks-Nov06-release'}, {id:'VxWorks-Decxx-release', text:'VxWorks-Decxx-release'}]
+    });
+    $("select").val(null).trigger("change");
+
+
+
+    $("#SprintList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 280,
+        data : [{id:'Sprint1', text:'"Sprint 45 - Ending 20 November 2015"'}, {id:'Sprint', text:'TBD'}]
+    });
+    $("select").val(null).trigger("change");
+
+    $("#WeekList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 200,
+        data : [{id:'week1', text:'Week1'}, {id:'week2', text:'Week2'}, {id:'week3', text:'Week3'}] 
+    });
+    $("select").val(null).trigger("change");
+
+    $("#DomainList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 200,
+        data : [{id:'Performance', text:'performance'}, {id:'nightly', text:'nightly'}]
+    });
+    $("select").val(null).trigger("change");
+
+    $("#HostosList").select2({
+        placeholder : 'please choose',
+        allowClear: true,
+        width : 280,
+        data : [{id:'Linux', text:'Linux'}, {id:'Windows', text:'Windows'}]
+    });
+    $("select").val(null).trigger("change");
+
+    $("#MongoDB").select2({
+        allowClear: true,
+        width : 280,
+        data : [{id: 0, text:'Yes'}, {id: 1, text:'No'}]
+    });
+    $("select").val(1).trigger("change");
+
+    $("#Update").select2({
+        allowClear: true,
+        width : 280,
+        data : [{id: 0, text:'Yes'}, {id: 1, text:'No'}]
+    });
+    $("select").val(1).trigger("change");
+
+
+    function run(){
+        $.ajax({
+            url : 'page4.php',
+            method : 'get',
+            data : {
+                release : $("#ReleaseList").find("option:selected").text(),
+                sprint : $('#SprintList').find("option:selected").text(),
+                week : $('#WeekList').find("option:selected").text(),
+                domain : $('#DomainList').find("option:selected").text(),
+                hostos : $('#HostosList').find("option:selected").text(),
+                mongodb : $('#MongoDB').find("option:selected").text(),
+                update : $('#Update').find("option:selected").text(),
+                logaddr : $('#LogAddr').val(),
+                require : $('#Requiremnet').val(),
+                taskid : $('#TaskId').val()
+            }
+        }).done(function(data){
+           console.log(data);         
+        });
+
+     
+    }
+
+</script>
+</body>
+</html>
